@@ -128,17 +128,30 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-function resetProgress() {
-  if (confirm("¿Seguro que quieres reiniciar todo el progreso?")) {
-    localStorage.removeItem(STORAGE_KEY);
-    renderClasses();
-  }
+function openConfirm() {
+  document.getElementById("confirm-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeConfirm() {
+  document.getElementById("confirm-overlay").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   renderClasses();
 
-  document.getElementById("reset-btn").addEventListener("click", resetProgress);
+  document.getElementById("reset-btn").addEventListener("click", openConfirm);
+
+  document.getElementById("confirm-cancel").addEventListener("click", closeConfirm);
+  document.getElementById("confirm-overlay").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("confirm-overlay")) closeConfirm();
+  });
+  document.getElementById("confirm-ok").addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEY);
+    renderClasses();
+    closeConfirm();
+  });
 
   document.getElementById("modal-close").addEventListener("click", closeModal);
 
@@ -147,6 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+    if (e.key === "Escape") {
+      closeModal();
+      closeConfirm();
+    }
   });
 });
